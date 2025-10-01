@@ -15,7 +15,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
 
   bool isLoading = false;
 
-  // Обновите метод _submit:
   void _submit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -29,7 +28,6 @@ class _RegistrationScreen extends State<RegistrationScreen> {
           _passCtrl.text,
         );
 
-        // Успешная регистрация
         final userData = UserData(
           email: _emailCtrl.text.trim(),
           login: _loginCtrl.text.trim(),

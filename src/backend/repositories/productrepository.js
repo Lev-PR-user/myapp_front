@@ -1,4 +1,3 @@
-// repositories/productRepository.js
 const pool = require('../config/db');
 
 class ProductRepository {

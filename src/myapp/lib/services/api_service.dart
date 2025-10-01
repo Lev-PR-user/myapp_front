@@ -1,13 +1,8 @@
-// api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Для веб-браузера используйте localhost или ваш IP
   static const String baseUrl = 'http://localhost:5000/api';
-
-  // Или если localhost не работает, используйте:
-  // static const String baseUrl = 'http://127.0.0.1:5000/api';
 
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
@@ -16,26 +11,71 @@ class ApiService {
   final http.Client _client = http.Client();
 
   Map<String, String> _getHeaders() {
-    return {'Content-Type': 'application/json', 'Accept': 'application/json'};
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Origin': 'http://localhost:3000',
+    };
+  }
+
+  Future<dynamic> get(String endpoint) async {
+    try {
+      final url = '$baseUrl$endpoint';
+      print('🌐 GET: $url');
+
+      final response = await _client.get(
+        Uri.parse(url),
+        headers: _getHeaders(),
+      );
+
+      print('📨 Response: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
+
+      return _handleResponse(response);
+    } catch (e) {
+      print('❌ Network error: $e');
+      throw Exception('Network error: $e');
+    }
   }
 
   Future<dynamic> post(String endpoint, dynamic data) async {
     try {
-      print('Sending POST to: $baseUrl$endpoint');
-      print('Data: $data');
+      final url = '$baseUrl$endpoint';
+      print('🌐 POST: $url');
+      print('📤 Data: $data');
 
       final response = await _client.post(
-        Uri.parse('$baseUrl$endpoint'),
+        Uri.parse(url),
         headers: _getHeaders(),
         body: json.encode(data),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('📨 Response: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
 
       return _handleResponse(response);
     } catch (e) {
-      print('Network error: $e');
+      print('❌ Network error: $e');
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Future<dynamic> delete(String endpoint) async {
+    try {
+      final url = '$baseUrl$endpoint';
+      print('🌐 DELETE: $url');
+
+      final response = await _client.delete(
+        Uri.parse(url),
+        headers: _getHeaders(),
+      );
+
+      print('📨 Response: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
+
+      return _handleResponse(response);
+    } catch (e) {
+      print('❌ Network error: $e');
       throw Exception('Network error: $e');
     }
   }
@@ -46,6 +86,18 @@ class ApiService {
       return json.decode(response.body);
     } else {
       throw Exception('HTTP ${response.statusCode}: ${response.body}');
+    }
+  }
+
+  // Метод для тестирования соединения
+  Future<bool> testConnection() async {
+    try {
+      final response = await get('/test');
+      print('✅ Backend connection test: $response');
+      return true;
+    } catch (e) {
+      print('❌ Backend connection failed: $e');
+      return false;
     }
   }
 }

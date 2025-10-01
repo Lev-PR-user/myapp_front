@@ -1,4 +1,3 @@
-// controllers/ProductController.js
 const productService = require('../servises/productservice');
 
 class ProductController {

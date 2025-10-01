@@ -1,12 +1,10 @@
-// controllers/cartController.js
-const cartService = require('../services/cartService');
+const cartService = require('../servises/cartService')
 
 class CartController {
   async addToCart(req, res) {
     try {
       const { productId, quantity = 1 } = req.body;
-      const userId = 1; // Временное решение
-
+      const userId = 1; 
       console.log(`Adding product ${productId} to cart for user ${userId}`);
       const result = await cartService.addToCart(userId, productId, quantity);
       res.json(result);
@@ -18,7 +16,7 @@ class CartController {
 
   async getCart(req, res) {
     try {
-      const userId = 1; // Временное решение
+      const userId = 1; 
       console.log(`Getting cart for user ${userId}`);
       const cart = await cartService.getCart(userId);
       res.json(cart);
@@ -31,7 +29,7 @@ class CartController {
   async removeFromCart(req, res) {
     try {
       const { productId } = req.params;
-      const userId = 1; // Временное решение
+      const userId = 1; 
 
       console.log(`Removing product ${productId} from cart for user ${userId}`);
       const result = await cartService.removeFromCart(userId, productId);

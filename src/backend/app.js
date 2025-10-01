@@ -6,6 +6,7 @@ const CreateTables = require('./config/setup');
 
 const UserRouters = require('./routes/userroutes');
 const productRoutes = require('./routes/productroutes');
+const cartService = require('./routes/cartRoutes');
 
 dotenv.config();
 const app = express()
@@ -22,6 +23,7 @@ app.use(express.json());
 
 app.use('/api/users', UserRouters);
 app.use('/api', productRoutes);
+app.use('/api', cartService);
 
 
 async function initializeApp() { 
