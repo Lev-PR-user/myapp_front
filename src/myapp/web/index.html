@@ -34,5 +34,15 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Решение для CORS в разработке
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1') {
+      window.addEventListener('flutter-first-frame', function() {
+        fetch('http://localhost:5000/api/test')
+          .catch(e => console.log('Backend not available'));
+      });
+    }
+  </script>
 </body>
 </html>

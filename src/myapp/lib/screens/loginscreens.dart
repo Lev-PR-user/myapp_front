@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'mainscreen.dart';
 import 'registrationscreen.dart';
 import '/models/userdata.dart';
+import '/services/user_service.dart';
 
 // Экран логина (StatefulWidget, т.к. нужно хранить состояние формы)
 class LoginForm extends StatefulWidget {
@@ -13,6 +14,51 @@ class LoginForm extends StatefulWidget {
 
 // Класс состояния для LoginForm
 class _LoginFormState extends State<LoginForm> {
+  final UserService _userService = UserService();
+  bool isLoading = false;
+
+  // Обновите метод _submit:
+  void _submit() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        final response = await _userService.login(
+          _emailCtrl.text.trim(),
+          _passCtrl.text,
+        );
+
+        // Успешный логин
+        final userData = UserData(
+          email: _emailCtrl.text.trim(),
+          login: _loginCtrl.text.trim(),
+          userId: response['user']['user_id'].toString(),
+        );
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Welcome!')));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainScreen(userData: userData),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   // Ключ для формы, позволяет вызывать валидацию и доступ к состоянию формы
   final _formKey = GlobalKey<FormState>();
 
@@ -30,23 +76,6 @@ class _LoginFormState extends State<LoginForm> {
     _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
-  }
-
-  // Метод отправки формы
-  void _submit() {
-    // Проверяем валидность формы
-    if (_formKey.currentState!.validate()) {
-      final userData = UserData(email: _emailCtrl.text, login: _loginCtrl.text);
-      // Показываем SnackBar с введённым email
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Email: ${_emailCtrl.text}')));
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
-      );
-    }
   }
 
   @override
